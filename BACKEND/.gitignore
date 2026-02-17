@@ -1,0 +1,48 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+.DS_Store
+[Aa]pp_[Dd]ata/
+
+## Visual Studio
+.vs/
+*.vspscc
+*.vssscc
+.builds/
+*.pidb
+*.svclog
+*.scc
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]uild/
+bld/
+[Bb]in/
+[Oo]bj/
+
+## NuGet
+*.nupkg
+**/packages/*
+!**/packages/build/
+
+## EF Core
+**/Migrations/*.Designer.cs
+!**/Migrations/*_InitialCreate.cs
+!**/Migrations/*_InitialCreate.Designer.cs
+
+## Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+## Database
+*.db
+*.db-shm
+*.db-wal
