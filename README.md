@@ -14,7 +14,7 @@ Full-stack Employee Management System for Bangladesh. Manages employee profiles 
 
 **Option A: Using Docker (Recommended)**
 ```bash
-docker run -d --name postgres-employee -e POSTGRES_PASSWORD=2233 -e POSTGRES_DB=EmployeeManagementDB -p 5432:5432 postgres:16
+docker run -d --name postgres-employee -e POSTGRES_PASSWORD=1234 -e POSTGRES_DB=EmployeeManagementDB -p 5432:5432 postgres:16
 ```
 
 **Option B: Using Local PostgreSQL**
