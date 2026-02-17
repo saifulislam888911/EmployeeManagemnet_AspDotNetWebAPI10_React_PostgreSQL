@@ -1,5 +1,6 @@
 using Application.DTOs;
 using Application.Interfaces;
+using Domain.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +26,7 @@ public class EmployeesController : ControllerBase
         return Ok(employees);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<EmployeeDto>> GetById(int id)
     {
         var employee = await _employeeService.GetEmployeeByIdAsync(id);
@@ -53,14 +54,14 @@ public class EmployeesController : ControllerBase
             var employee = await _employeeService.CreateEmployeeAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = employee.Id }, employee);
         }
-        catch (InvalidOperationException ex)
+        catch (DuplicateNidException ex)
         {
             return BadRequest(ex.Message);
         }
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<ActionResult<EmployeeDto>> Update(int id, [FromBody] UpdateEmployeeDto dto)
     {
         try
@@ -70,14 +71,14 @@ public class EmployeesController : ControllerBase
                 return NotFound();
             return Ok(employee);
         }
-        catch (InvalidOperationException ex)
+        catch (DuplicateNidException ex)
         {
             return BadRequest(ex.Message);
         }
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {
         var result = await _employeeService.DeleteEmployeeAsync(id);
@@ -97,7 +98,7 @@ public class EmployeesController : ControllerBase
         return File(pdf, "application/pdf", "employees.pdf");
     }
 
-    [HttpGet("{id}/cv/pdf")]
+    [HttpGet("{id:int}/cv/pdf")]
     public async Task<IActionResult> ExportCvPdf(int id)
     {
         var employee = await _employeeService.GetEmployeeByIdAsync(id);

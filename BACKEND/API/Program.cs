@@ -11,24 +11,21 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// FluentValidation
+builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateEmployeeDtoValidator>();
 
-// Services
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IPdfService, PdfService>();
 
-// JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -47,27 +44,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
 
 var app = builder.Build();
 
-// Auto-run migrations and seed data
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     dbContext.Database.Migrate();
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

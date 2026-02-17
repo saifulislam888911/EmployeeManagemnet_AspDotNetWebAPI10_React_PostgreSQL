@@ -3,12 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
-public class ApplicationDbContext : DbContext
+using Application.Interfaces;
+
+public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
-        : base(options)
-    {
-    }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Spouse> Spouses { get; set; }
@@ -18,7 +17,6 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Employee Configuration
         modelBuilder.Entity<Employee>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -28,21 +26,10 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Phone).IsRequired().HasMaxLength(14);
             entity.Property(e => e.Department).IsRequired().HasMaxLength(100);
             entity.Property(e => e.BasicSalary).HasColumnType("decimal(18,2)");
-
-            // One-to-One with Spouse
-            entity.HasOne(e => e.Spouse)
-                  .WithOne(s => s.Employee)
-                  .HasForeignKey<Spouse>(s => s.EmployeeId)
-                  .OnDelete(DeleteBehavior.Cascade);
-
-            // One-to-Many with Children
-            entity.HasMany(e => e.Children)
-                  .WithOne(c => c.Employee)
-                  .HasForeignKey(c => c.EmployeeId)
-                  .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.Spouse).WithOne(s => s.Employee).HasForeignKey<Spouse>(s => s.EmployeeId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(e => e.Children).WithOne(c => c.Employee).HasForeignKey(c => c.EmployeeId).OnDelete(DeleteBehavior.Cascade);
         });
 
-        // Spouse Configuration
         modelBuilder.Entity<Spouse>(entity =>
         {
             entity.HasKey(s => s.Id);
@@ -51,15 +38,13 @@ public class ApplicationDbContext : DbContext
             entity.Property(s => s.NID).IsRequired().HasMaxLength(17);
         });
 
-        // Child Configuration
         modelBuilder.Entity<Child>(entity =>
         {
             entity.HasKey(c => c.Id);
             entity.Property(c => c.Name).IsRequired().HasMaxLength(200);
             entity.Property(c => c.DateOfBirth).IsRequired();
         });
-        
-        // Seed Data
+
         DataSeeder.SeedData(modelBuilder);
     }
 }

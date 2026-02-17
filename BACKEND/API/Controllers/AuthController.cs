@@ -20,13 +20,19 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginRequest request)
     {
-        // Simple hardcoded authentication for demo
-        string role = request.Username switch
+        var adminUser = _configuration.GetSection("AuthUsers:Admin");
+        var viewerUser = _configuration.GetSection("AuthUsers:Viewer");
+
+        string? role = null;
+
+        if (request.Username == adminUser["Username"] && request.Password == adminUser["Password"])
         {
-            "admin" when request.Password == "admin123" => "Admin",
-            "viewer" when request.Password == "viewer123" => "Viewer",
-            _ => null
-        };
+            role = "Admin";
+        }
+        else if (request.Username == viewerUser["Username"] && request.Password == viewerUser["Password"])
+        {
+            role = "Viewer";
+        }
 
         if (role == null)
             return Unauthorized("Invalid credentials");
@@ -50,7 +56,7 @@ public class AuthController : ControllerBase
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddHours(24),
+            expires: DateTime.UtcNow.AddHours(24),
             signingCredentials: credentials
         );
 
