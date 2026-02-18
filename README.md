@@ -12,12 +12,7 @@ Full-stack Employee Management System for Bangladesh. Manages employee profiles 
 
 ### Step 1: Setup Database
 
-**Option A: Using Docker (Recommended)**
-```bash
-docker run -d --name postgres-employee -e POSTGRES_PASSWORD=1234 -e POSTGRES_DB=EmployeeManagementDB -p 5432:5432 postgres:16
-```
-
-**Option B: Using Local PostgreSQL**
+**Option A: Using Local PostgreSQL**
 1. Open PostgreSQL and create a database named `EmployeeManagementDB`
 2. Update the connection string in `BACKEND/API/appsettings.json`:
 ```json
