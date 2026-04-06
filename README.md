@@ -32,7 +32,7 @@ _____________________________
 
 ---
 
-### Client : Amber Group : 
+### Client : Fionetix Solution LTD : 
 - Assignment : Test Project According to Provided Requirements ; 
 - Study : Self-Practice, Self-Study ; 
 - Helped From : ; 
